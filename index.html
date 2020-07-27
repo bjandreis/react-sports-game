@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React - Sports Game</title>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script type="text/babel">
+
+        class Team extends React.Component {
+            constructor(props) {
+                super(props)
+                this.state = {
+                    default: true,
+                    name: props.name,
+                    logo: props.logo,
+                    shots: 0,
+                    score: 0
+                }
+            }
+
+            takeShot = event => {
+                this.setState((state, props) => {
+                    const scoreChance = Math.random()
+                    const scoreSound = new Audio('swish.mp3')
+                    this.state.default = false
+                    if (scoreChance < 0.5) {
+                        scoreSound.play()
+                        return {
+                            shots: state.shots + 1,
+                            score: state.score + 1
+                        }
+                    } else {
+                        return { shots: state.shots + 1 }
+                    }
+                })
+            }
+
+            render() {
+                const teamName = this.state.name
+                const teamLogo = this.state.logo
+                const shotsTaken = this.state.shots
+                const totalScore = this.state.score
+                const shotPercentage = Math.round(this.state.score / this.state.shots * 100)
+                const initialState = this.state.default
+                let percentageHTML
+                if (initialState === true) {
+                    percentageHTML = ''
+                } else {
+                    percentageHTML = <h3>Score percentage: {shotPercentage}%</h3>
+                }
+                return (
+                    <div>
+                        <h1>{teamName}</h1>
+                        <img src={teamLogo} width='200px' />
+                        <h3>Shots taken: {shotsTaken}</h3>
+                        <h3>Total score: {totalScore}</h3>
+                        {percentageHTML}
+                        <button onClick={this.takeShot}>Shoot</button>
+                    </div>
+                )
+            }
+        }
+
+        class Game extends React.Component {
+            constructor(props) {
+                super(props)
+                this.state = {
+                    venue: props.venue
+                }
+            }
+
+            render() {
+                return (
+                    <div>
+                        <h1>Welcome to {this.state.venue}</h1>
+                        <Team name='Reliable Excavation Demolition (RED)' logo='https://wiki.teamfortress.com/w/images/8/80/Team_red.png' />
+                        <Team name='Builders League United (BLU)' logo='https://wiki.teamfortress.com/w/images/0/07/Team_blu.png' />
+                    </div>
+                )
+            }
+        }
+
+        function App(props) {
+            return (
+                <div>
+                    <Game venue='2Fort' />
+                </div>
+            )
+        }
+
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        )
+
+    </script>
+</body>
+
+</html>
